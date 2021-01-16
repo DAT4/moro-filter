@@ -1,7 +1,6 @@
 package mvvm
 
 import models.Event
-import java.awt.geom.Area
 import kotlin.reflect.KClass
 
 sealed class Filter {
