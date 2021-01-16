@@ -3,7 +3,7 @@ import mvvm.*
 
 fun main() {
 
-    val filters = listOf<Filter>(
+    val filters = listOf(
         PriceLTFilter(50),
         PlaceFilter("LOPPEN"),
         PlaceFilter("HUSET")
