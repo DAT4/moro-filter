@@ -73,7 +73,21 @@ data class GenreFilter(val genre: String) : InclusiveFilter() {
     override val value = "\"$genre\" "
 }
 
-fun List<Event>.applyFilters(filters: List<Filter>) = filter { event -> filters.all { it.isMatching(event) } }
+fun List<Event>.applyFilters(filters: List<Filter>) = filter { event -> filters.isMatching(event) }
+
+fun List<Filter>.isMatching(event: Event): Boolean {
+    return this
+        .groupBy { it.javaClass.kotlin }
+        .all { it.isMatching(event) }
+}
+
+fun Map.Entry<KClass<Filter>, List<Filter>>.isMatching(event: Event): Boolean {
+    return when (this.value.first()) {
+        is InclusiveFilter -> this.value.any { it.isMatching(event) }
+        is ExclusiveFilter -> this.value.first().isMatching(event)
+    }
+}
+
 fun List<Filter>.stringify(): String {
     return this
         .groupBy { it.javaClass.kotlin }.also { println(it) }
@@ -81,7 +95,6 @@ fun List<Filter>.stringify(): String {
         .joinToString(", ")
         .dropLast(1)
 }
-
 
 fun Map.Entry<KClass<Filter>, List<Filter>>.stringify(): String {
     return when (this.value.first()) {
