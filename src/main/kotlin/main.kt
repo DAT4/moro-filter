@@ -1,7 +1,8 @@
 import kotlinx.coroutines.awaitAll
 import mvvm.*
+import okhttp3.internal.wait
 
-fun main() {
+suspend fun main() {
 
     val filters = listOf(
         PriceLTFilter(50),
@@ -10,8 +11,9 @@ fun main() {
     )
 
     val viewModel = EventViewModel(EventRepository())
-    viewModel.loadEvents()
-    Thread.sleep(5000)
+
+    val job = viewModel.loadEvents()
+    job.join()
     val events = viewModel.filterEvents(filters)
     events.forEach {
         println(it.title)
